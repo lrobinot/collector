@@ -8,7 +8,6 @@ import schedule
 import socket
 import tempfile
 import time
-import os
 
 
 class FreeboxException(Exception):

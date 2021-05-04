@@ -84,7 +84,7 @@ class Plugin(object):
                 os.getenv('COLLECTOR_MQTT_PASS', 'sysadmin'))
         mqtt_client.connect(
                 os.getenv('COLLECTOR_MQTT_HOST', 'localhost'),
-                port=os.getenv('COLLECTOR_MQTT_PORT'i, 1883))
+                port=os.getenv('COLLECTOR_MQTT_PORT', 1883))
 
         return mqtt_client
 

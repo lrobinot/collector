@@ -5,7 +5,6 @@ import logging
 import plugin
 import requests
 import schedule
-import os
 
 
 class Enedis(plugin.Plugin):

@@ -1,11 +1,11 @@
 import datetime
-import dateutil.parser, dateutil.tz
+import dateutil.parser
+import dateutil.tz
 import json
 import logging
 import plugin
 import requests
 import schedule
-import os
 
 
 class Solcast(plugin.Plugin):

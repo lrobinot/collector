@@ -4,10 +4,10 @@ import fitbit
 import json
 import logging
 import plugin
-import requests
 import schedule
 import time
 import os
+import sys
 
 
 def transform_body_log_fat_datapoint(datapoint):
@@ -19,6 +19,7 @@ def transform_body_log_fat_datapoint(datapoint):
     }]
     logging.debug('returning body_log_fat datapoints: %s', ret_dps)
     return ret_dps
+
 
 def transform_body_log_weight_datapoint(datapoint):
     ret_dps = [
@@ -44,6 +45,7 @@ def transform_body_log_weight_datapoint(datapoint):
     logging.debug('returning body_log_weight datapoints: %s', ret_dps)
     return ret_dps
 
+
 def transform_activities_heart_datapoint(datapoint):
     logging.debug('transform_activities_heart_datapoint: %s', datapoint)
     d_t = datapoint['dateTime']
@@ -68,6 +70,7 @@ def transform_activities_heart_datapoint(datapoint):
                 })
     logging.debug('returning activities_heart datapoints: %s', ret_dps)
     return ret_dps
+
 
 def transform_sleep_datapoint(datapoint):
     d_t = datapoint['startTime']
@@ -172,9 +175,9 @@ class Fitbit(plugin.Plugin):
 
     SERIES = {
         'activities': {
-        #     # 'activityCalories': None,  # dateTime, value
-        #     # 'calories': None,  # dateTime, value
-        #     # 'caloriesBMR': None,  # dateTime, value
+            # 'activityCalories': None,  # dateTime, value
+            # 'calories': None,  # dateTime, value
+            # 'caloriesBMR': None,  # dateTime, value
             'distance': None,  # dateTime, value
             'elevation': None,  # dateTime, value
             'floors': None,  # dateTime, value
@@ -183,10 +186,10 @@ class Fitbit(plugin.Plugin):
                 'key_series': 'restingHeartRate',
                 'transform': transform_activities_heart_datapoint
             },
-        #     # 'minutesFairlyActive': None,  # dateTime, value
-        #     # 'minutesLightlyActive': None,  # dateTime, value
-        #     # 'minutesSedentary': None,  # dateTime, value
-        #     # 'minutesVeryActive': None,  # dateTime, value
+            # 'minutesFairlyActive': None,  # dateTime, value
+            # 'minutesLightlyActive': None,  # dateTime, value
+            # 'minutesSedentary': None,  # dateTime, value
+            # 'minutesVeryActive': None,  # dateTime, value
             'steps': None  # dateTime, value
         },
         'activities_tracker': [
@@ -227,19 +230,19 @@ class Fitbit(plugin.Plugin):
                     self.api_requests += 1
                     results = fitc.time_series(resource, base_date=one_tuple[0], end_date=one_tuple[1])
                     break
-                except fitbit.exceptions.Timeout as ex:
+                except fitbit.exceptions.Timeout:
                     logging.warning('Request timed out, retrying in 15 seconds...')
                     time.sleep(15)
                 except fitbit.exceptions.HTTPServerError as ex:
                     logging.warning('Server returned exception (5xx), retrying in 15 seconds (%s)', ex)
                     time.sleep(15)
-                except fitbit.exceptions.HTTPTooManyRequests as ex:
+                except fitbit.exceptions.HTTPTooManyRequests:
                     # 150 API calls done, and python-fitbit doesn't provide the retry-after header, so stop trying
                     # and allow the limit to reset, even if it costs us one hour
                     logging.info('API limit reached, pause for 3610 seconds!')
                     self.api_pause_until = int(time.time()) + 3610
                 except Exception as ex:
-                    logging.exception('Got some unexpected exception')
+                    logging.exception('Got some unexpected exception (%s)', ex)
                     raise
 
             if not results:
@@ -301,11 +304,11 @@ class Fitbit(plugin.Plugin):
 
                 logging.debug(f'resource={resource}')
 
-                key_series = series
-                if isinstance(series_list, dict) and series_list.get(series):
-                    # Datapoints are retrieved with all keys in the same dict, so makes no sense to retrieve individual
-                    # series names. Use one series as the key series.
-                    key_series = series_list[series]['key_series']
+                # key_series = series
+                # if isinstance(series_list, dict) and series_list.get(series):
+                #     # Datapoints are retrieved with all keys in the same dict, so makes no sense to retrieve individual
+                #     # series names. Use one series as the key series.
+                #     key_series = series_list[series]['key_series']
 
                 if meas == 'sleep':
                     fitc.API_VERSION = '1.2'
@@ -328,9 +331,9 @@ class Fitbit(plugin.Plugin):
                             self.create_api_datapoint_meas_series(
                                 meas, series, one_d.get('value'), one_d.get('dateTime')))
 
-                precision = 'h'
-                if meas == 'sleep':
-                    precision = 's'
+                # precision = 'h'
+                # if meas == 'sleep':
+                #     precision = 's'
 
                 for data in converted_dps:
                     logging.debug(json.dumps(data))

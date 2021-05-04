@@ -4,7 +4,6 @@ import logging
 import plugin
 import schedule
 import time
-import os
 
 
 class Lifx(plugin.Plugin):
