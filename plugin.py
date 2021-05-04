@@ -79,8 +79,12 @@ class Plugin(object):
         mqtt_client.on_subscribe = self.mqtt_on_subscribe
         mqtt_client.on_log = self.mqtt_on_log
 
-        mqtt_client.username_pw_set(os.getenv('COLLECTOR_MQTT_USER'), os.getenv('COLLECTOR_MQTT_PASS'))
-        mqtt_client.connect(os.getenv('COLLECTOR_MQTT_HOST'), port=os.getenv('COLLECTOR_MQTT_PORT'))
+        mqtt_client.username_pw_set(
+                os.getenv('COLLECTOR_MQTT_USER', 'sysadmin'),
+                os.getenv('COLLECTOR_MQTT_PASS', 'sysadmin'))
+        mqtt_client.connect(
+                os.getenv('COLLECTOR_MQTT_HOST', 'localhost'),
+                port=os.getenv('COLLECTOR_MQTT_PORT'i, 1883))
 
         return mqtt_client
 
