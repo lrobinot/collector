@@ -20,7 +20,10 @@ class Enedis(plugin.Plugin):
 
     def scheduler(self):
         scheduler = schedule.Scheduler()
-        scheduler.every().day.at('06:00').do(self.run_threaded, self.job)
+        scheduler.every().day.at('02:18').do(self.run_threaded, self.job)
+        scheduler.every().day.at('08:06').do(self.run_threaded, self.job)
+        scheduler.every().day.at('14:32').do(self.run_threaded, self.job)
+        scheduler.every().day.at('20:54').do(self.run_threaded, self.job)
         return scheduler
 
     def job(self):
