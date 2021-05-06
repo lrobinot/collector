@@ -6,7 +6,7 @@ import socket
 import time
 
 
-def get_temp():
+def get_cpu_temp():
     with open('/sys/class/thermal/thermal_zone0/temp') as f:
         data = f.read().strip()
     return float(data) / 1000.
@@ -15,19 +15,19 @@ def get_temp():
 def get_cpu_load_1m():
     with open('/proc/loadavg') as f:
         data = f.read().strip()
-    return data.split(' ')[0]
+    return float(data.split(' ')[0])
 
 
 def get_cpu_load_5m():
     with open('/proc/loadavg') as f:
         data = f.read().strip()
-    return data.split(' ')[1]
+    return float(data.split(' ')[1])
 
 
 def get_cpu_load_15m():
     with open('/proc/loadavg') as f:
         data = f.read().strip()
-    return data.split(' ')[2]
+    return float(data.split(' ')[2])
 
 
 class RasPi(plugin.Plugin):
@@ -49,8 +49,8 @@ class RasPi(plugin.Plugin):
 
         measures = [
             {
-                'name': 'processor_temperature',
-                'get': get_temp,
+                'name': 'cpu_temp',
+                'get': get_cpu_temp,
             },
             {
                 'name': 'cpu_load_1m',
