@@ -7,7 +7,7 @@ import time
 
 
 def trasnform_temp(v):
-    return float(v) / 1000.)
+    return float(v) / 1000.
 
 
 class RasPi(plugin.Plugin):
