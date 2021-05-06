@@ -6,8 +6,28 @@ import socket
 import time
 
 
-def trasnform_temp(v):
-    return float(v) / 1000.
+def get_temp():
+    with open('/sys/class/thermal/thermal_zone0/temp') as f:
+        data = f.read().strip()
+    return float(data) / 1000.
+
+
+def get_cpu_load_1m():
+    with open('/proc/loadavg') as f:
+        data = f.read().strip()
+    return data.split(' ')[0]
+
+
+def get_cpu_load_5m():
+    with open('/proc/loadavg') as f:
+        data = f.read().strip()
+    return data.split(' ')[1]
+
+
+def get_cpu_load_15m():
+    with open('/proc/loadavg') as f:
+        data = f.read().strip()
+    return data.split(' ')[2]
 
 
 class RasPi(plugin.Plugin):
@@ -16,7 +36,7 @@ class RasPi(plugin.Plugin):
         self.active = True
         self.name = 'raspi'
         self.version = '1.0'
-        self.description = 'RaspberryPi information'
+        self.description = 'RaspberryPi SysInfo'
         self.mqtt_topic = '/system/raspi'
 
     def scheduler(self):
@@ -29,17 +49,26 @@ class RasPi(plugin.Plugin):
 
         measures = [
             {
-                'name': 'temp',
-                'file': '/sys/class/thermal/thermal_zone0/temp',
-                'trasnform': trasnform_temp,
-            }
+                'name': 'processor_temperature',
+                'get': get_temp,
+            },
+            {
+                'name': 'cpu_load_1m',
+                'get': get_cpu_load_1m,
+            },
+            {
+                'name': 'cpu_load_5m',
+                'get': get_cpu_load_5m,
+            },
+            {
+                'name': 'cpu_load_15m',
+                'get': get_cpu_load_15m,
+            },
         ]
 
         fields = {}
         for m in measures:
-            with open(m['file']) as f:
-                value = f.read().strip()
-            fields[m['name']] = m['trasnform'](value)
+            fields[m['name']] = m['get']()
 
         data = []
         data.append({
